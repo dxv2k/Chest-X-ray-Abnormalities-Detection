@@ -6,27 +6,27 @@
 # train: ../coco128/images/train2017/
 # val: ../coco128/images/train2017/ 
 # TODO: did not test yet 
-train: H:/VinBigData Chest X-ray Dataset/images 
-val: H:/VinBigData Chest X-ray Dataset/images 
+train: "H:/VinBigData Chest X-ray Dataset/images" 
+val: "H:/VinBigData Chest X-ray Dataset/images" 
 
 # number of classes
 nc: 14 
 
 # class names
 names: [ 
-Aortic enlargement, 
-Atelectasis, 
-Calcification, 
-Cardiomegaly, 
-Consolidation, 
-ILD, 
-Infiltration, 
-Lung Opacity, 
-Nodule/Mass, 
-Other lesion, 
-Pleural effusion, 
-Pleural thickening, 
-Pneumothorax, 
-Pulmonary fibrosis, 
+"Aortic enlargement", 
+"Atelectasis", 
+"Calcification", 
+"Cardiomegaly", 
+"Consolidation", 
+"ILD", 
+"Infiltration", 
+"Lung Opacity", 
+"Nodule/Mass", 
+"Other lesion", 
+"Pleural effusion", 
+"Pleural thickening", 
+"Pneumothorax", 
+"Pulmonary fibrosis", 
 ]
 

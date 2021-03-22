@@ -6,7 +6,10 @@ VinBigData Chest X-ray Abnormalities Detection
 
 # Usage: 
 ## Train args:
-- python train.py --img 640 --batch 4 --epochs 5 --data ../dataset.yaml --weights yolov5x.pt --workers 0   
+'''
+python train.py --img 640 --batch 4 --epochs 5 --data ../dataset.yaml --weights yolov5x.pt --workers 0   
+python train.py --img 640 --batch 8 --epochs 30 --data ../dataset.yaml --weights runs/train/exp9/weights/last.pt --workers 0 
+'''
 
 # Note: 
 - workers should set to 0 (I'm using RTX 2070) 

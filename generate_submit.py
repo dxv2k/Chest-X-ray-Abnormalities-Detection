@@ -8,7 +8,8 @@ result_path = "run/exp/labels"
 test_df = pd.read_csv("./run/test.csv")
 print(test_df.shape)
 
-
+# YOLO cls  x   y   w   h   conf
+# VOC  cls  conf    x1  y1  x2  y2 
 
 
 # function get from kaggle
@@ -65,10 +66,15 @@ for file_path in tqdm(glob("run/exp/labels/*txt")):
     print("YOLO bbox ", data)
     data = data[:, [0, 5, 1, 2, 3, 4]] # convert to VOC format 
     print("VOC format ", data)
-#     for idx in range(len(bboxes)):
-#         bboxes[idx] = str(int(float(bboxes[idx]))) if idx%6!=1 else bboxes[idx]
-#     image_ids.append(image_id)
-#     PredictionStrings.append(' '.join(bboxes))
+    bboxes = list(np.round(np.concatenate((data[:, :2], np.round(yolo2voc(h, w, data[:, 2:]))), axis =1).reshape(-1), 1).astype(str))
+    for idx in range(len(bboxes)):
+        bboxes[idx] = str(int(float(bboxes[idx]))) if idx%6!=1 else bboxes[idx]
+    image_ids.append(image_id)
+    PredictionStrings.append(' '.join(bboxes))
 
 
 # print(cnt)
+
+
+
+# fill not exists img with 14 1 0 0 1 1 

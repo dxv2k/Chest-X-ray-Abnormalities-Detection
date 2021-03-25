@@ -45,35 +45,33 @@ PredictionStrings = []
 #     image_ids.append(image_id)
 #     PredictionStrings.append(' '.join(bboxes))
 
-# cnt = 0 
-for file_path in tqdm(glob("run/exp/labels/*txt")):
-    # cnt +=1 
-    # print(file_path)
-    image_id = file_path.split('/')[-1].split('.')[0]
-#     w, h = test_df.loc[test_df.image_id==image_id,['width', 'height']].values[0]
+# YOLO cls  x   y   w   h   conf
+# VOC  cls  conf    x1  y1  x2  y2 
+curr_dir = "run/exp/labels"
+for file_path in tqdm(os.listdir(curr_dir)): 
+    if file_path.endswith(".txt"): 
+        image_id =  file_path 
+        # print(image_id) 
+    # w, h = test_df.loc[test_df.image_id==image_id,['width', 'height']].values[0]
+    w, h = test_df.loc[test_df.image_id==image_id,[test_df.width, test_df.height]].values[1]
+    print(w,h)
+    # if test_df.image_id == image_id:  
+    #     w,h = test_df.width, test_df.height
 
-    # ERROR: IndexError 
-    try: 
-        # w, h = test_df.loc[test_df.image_id,['width', 'height']].values[0]
-        w, h = test_df.loc[test_df.image_id==image_id,['width', 'height']].values[0]
-        print(w,h)
-    except IndexError:
-        continue 
-    # print(w,h)
-
-    f = open(file_path, 'r')
+    f = open(curr_dir + '/' + image_id, 'r')
     data = np.array(f.read().replace('\n', ' ').strip().split(' ')).astype(np.float32).reshape(-1, 6)
-    print("YOLO bbox ", data)
+    # print("YOLO bbox ", data)
+
     data = data[:, [0, 5, 1, 2, 3, 4]] # convert to VOC format 
-    print("VOC format ", data)
-    bboxes = list(np.round(np.concatenate((data[:, :2], np.round(yolo2voc(h, w, data[:, 2:]))), axis =1).reshape(-1), 1).astype(str))
-    for idx in range(len(bboxes)):
-        bboxes[idx] = str(int(float(bboxes[idx]))) if idx%6!=1 else bboxes[idx]
-    image_ids.append(image_id)
-    PredictionStrings.append(' '.join(bboxes))
+    # print("VOC format ", data)
+#    bboxes = list(np.round(np.concatenate((data[:, :2], np.round(yolo2voc(h, w, data[:, 2:]))), axis =1).reshape(-1), 1).astype(str))
+#     for idx in range(len(bboxes)):
+#         bboxes[idx] = str(int(float(bboxes[idx]))) if idx%6!=1 else bboxes[idx]
+#     image_ids.append(image_id)
+#     PredictionStrings.append(' '.join(bboxes))
 
+# print(image_ids, PredictionStrings)
 
-# print(cnt)
 
 
 

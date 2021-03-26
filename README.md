@@ -13,3 +13,8 @@ python train.py --img 640 --batch 8 --epochs 30 --data ../dataset.yaml --weights
 
 # Note: 
 - workers should set to 0 (I'm using RTX 2070) 
+
+
+# RESULT: 
+- exp15 - 0.064 
+- exp17 - 0.116

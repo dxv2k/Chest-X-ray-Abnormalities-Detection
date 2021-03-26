@@ -5,11 +5,8 @@ import shutil, os
 from tqdm.notebook import tqdm # progress bar
 
 result_path = "run/exp/labels" 
+local_detect_path = r"I:\github\Chest-X-ray-Abnormalities-Detection\yolov5\runs\detect\exp\labels"
 test_df = pd.read_csv("./run/test.csv")
-# print(test_df.shape)
-
-# YOLO cls  x   y   w   h   conf
-# VOC  cls  conf    x1  y1  x2  y2 
 
 
 # function get from kaggle
@@ -35,8 +32,10 @@ PredictionStrings = []
 
 # YOLO cls  x   y   w   h   conf
 # VOC  cls  conf    x1  y1  x2  y2 
-curr_dir = "run/exp/labels"
-for file_path in tqdm(os.listdir(curr_dir)): 
+local_detect_path = r"I:\github\Chest-X-ray-Abnormalities-Detection\yolov5\runs\detect\exp\labels"
+# curr_dir = "run/exp/labels"
+# for file_path in tqdm(os.listdir(curr_dir)): 
+for file_path in tqdm(os.listdir(local_detect_path)): 
     if file_path.endswith(".txt"): 
         image_id = file_path.replace('.txt','') 
         # print(image_id)
@@ -44,7 +43,8 @@ for file_path in tqdm(os.listdir(curr_dir)):
     w, h = test_df.loc[test_df.image_id == image_id,['width', 'height']].values[0]
     # print(w,h)
 
-    f = open(curr_dir + '/' + file_path, 'r')
+    # f = open(curr_dir + '/' + file_path, 'r')
+    f = open(local_detect_path + '/' + file_path, 'r')
     data = np.array(f.read().replace('\n', ' ').strip().split(' ')).astype(np.float32).reshape(-1, 6)
     # print("YOLO bbox ", data)
 

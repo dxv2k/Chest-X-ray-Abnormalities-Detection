@@ -47,18 +47,29 @@ PredictionStrings = []
 
 # YOLO cls  x   y   w   h   conf
 # VOC  cls  conf    x1  y1  x2  y2 
+cnt = 0 
 curr_dir = "run/exp/labels"
 for file_path in tqdm(os.listdir(curr_dir)): 
+    cnt += 1 
+    if cnt == 20: 
+        break 
     if file_path.endswith(".txt"): 
-        image_id =  file_path 
-        # print(image_id) 
+        image_id = file_path.replace('.txt','') 
+        print(image_id)
     # w, h = test_df.loc[test_df.image_id==image_id,['width', 'height']].values[0]
-    w, h = test_df.loc[test_df.image_id==image_id,[test_df.width, test_df.height]].values[1]
-    print(w,h)
+    # w, h = test_df.loc[test_df.image_id==image_id,[test_df.width, test_df.height]].values[1]
+    # print(w,h)
     # if test_df.image_id == image_id:  
     #     w,h = test_df.width, test_df.height
 
-    f = open(curr_dir + '/' + image_id, 'r')
+    # LOGIC ERROR here
+    # TODO: need to get specific width, height from given image_id
+    # if image_id in test_df.image_id.values: 
+    #     w,h = test_df.width, test_df.height
+    #     print(w,h)
+    w, h = test_df.loc[image_id,['width', 'height']].values[0]
+
+    f = open(curr_dir + '/' + file_path, 'r')
     data = np.array(f.read().replace('\n', ' ').strip().split(' ')).astype(np.float32).reshape(-1, 6)
     # print("YOLO bbox ", data)
 

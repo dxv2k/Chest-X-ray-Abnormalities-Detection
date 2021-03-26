@@ -6,7 +6,7 @@ from tqdm.notebook import tqdm # progress bar
 
 result_path = "run/exp/labels" 
 test_df = pd.read_csv("./run/test.csv")
-print(test_df.shape)
+# print(test_df.shape)
 
 # YOLO cls  x   y   w   h   conf
 # VOC  cls  conf    x1  y1  x2  y2 
@@ -32,42 +32,17 @@ def yolo2voc(image_height, image_width, bboxes):
 image_ids = []
 PredictionStrings = []
 
-# # for file_path in tqdm(glob('runs/detect/exp/labels/*txt')):
-# for file_path in tqdm(glob(result_path + '/*txt')):
-#     image_id = file_path.split('/')[-1].split('.')[0]
-#     w, h = test_df.loc[test_df.image_id==image_id,['width', 'height']].values[0]
-#     f = open(file_path, 'r')
-#     data = np.array(f.read().replace('\n', ' ').strip().split(' ')).astype(np.float32).reshape(-1, 6)
-#     data = data[:, [0, 5, 1, 2, 3, 4]]
-#     bboxes = list(np.round(np.concatenate((data[:, :2], np.round(yolo2voc(h, w, data[:, 2:]))), axis =1).reshape(-1), 1).astype(str))
-#     for idx in range(len(bboxes)):
-#         bboxes[idx] = str(int(float(bboxes[idx]))) if idx%6!=1 else bboxes[idx]
-#     image_ids.append(image_id)
-#     PredictionStrings.append(' '.join(bboxes))
 
 # YOLO cls  x   y   w   h   conf
 # VOC  cls  conf    x1  y1  x2  y2 
-cnt = 0 
 curr_dir = "run/exp/labels"
 for file_path in tqdm(os.listdir(curr_dir)): 
-    cnt += 1 
-    if cnt == 20: 
-        break 
     if file_path.endswith(".txt"): 
         image_id = file_path.replace('.txt','') 
-        print(image_id)
-    # w, h = test_df.loc[test_df.image_id==image_id,['width', 'height']].values[0]
-    # w, h = test_df.loc[test_df.image_id==image_id,[test_df.width, test_df.height]].values[1]
-    # print(w,h)
-    # if test_df.image_id == image_id:  
-    #     w,h = test_df.width, test_df.height
+        # print(image_id)
 
-    # LOGIC ERROR here
-    # TODO: need to get specific width, height from given image_id
-    # if image_id in test_df.image_id.values: 
-    #     w,h = test_df.width, test_df.height
-    #     print(w,h)
-    w, h = test_df.loc[image_id,['width', 'height']].values[0]
+    w, h = test_df.loc[test_df.image_id == image_id,['width', 'height']].values[0]
+    # print(w,h)
 
     f = open(curr_dir + '/' + file_path, 'r')
     data = np.array(f.read().replace('\n', ' ').strip().split(' ')).astype(np.float32).reshape(-1, 6)
@@ -75,15 +50,19 @@ for file_path in tqdm(os.listdir(curr_dir)):
 
     data = data[:, [0, 5, 1, 2, 3, 4]] # convert to VOC format 
     # print("VOC format ", data)
-#    bboxes = list(np.round(np.concatenate((data[:, :2], np.round(yolo2voc(h, w, data[:, 2:]))), axis =1).reshape(-1), 1).astype(str))
-#     for idx in range(len(bboxes)):
-#         bboxes[idx] = str(int(float(bboxes[idx]))) if idx%6!=1 else bboxes[idx]
-#     image_ids.append(image_id)
-#     PredictionStrings.append(' '.join(bboxes))
+    bboxes = list(np.round(np.concatenate((data[:, :2], np.round(yolo2voc(h, w, data[:, 2:]))), axis =1).reshape(-1), 1).astype(str))
+    for idx in range(len(bboxes)):
+        bboxes[idx] = str(int(float(bboxes[idx]))) if idx%6!=1 else bboxes[idx]
+    image_ids.append(image_id)
+    PredictionStrings.append(' '.join(bboxes))
 
 # print(image_ids, PredictionStrings)
 
-
-
+pred_df = pd.DataFrame({'image_id':image_ids,
+                        'PredictionString':PredictionStrings})
 
 # fill not exists img with 14 1 0 0 1 1 
+sub_df = pd.merge(test_df, pred_df, on = 'image_id', how = 'left').fillna("14 1 0 0 1 1")
+sub_df = sub_df[['image_id', 'PredictionString']]
+sub_df.to_csv('./submission.csv',index = False)
+sub_df.tail()
